@@ -1,0 +1,32 @@
+@WorkoutTracker.Api_HostAddress = http://localhost:5019
+
+### List all exercises
+GET {{WorkoutTracker.Api_HostAddress}}/api/exercises/
+Accept: application/json
+
+### Create an exercise
+POST {{WorkoutTracker.Api_HostAddress}}/api/exercises/
+Content-Type: application/json
+
+{
+  "name": "Bench Press",
+  "category": "Strength",
+  "muscleGroup": "Chest"
+}
+
+### Get exercise by ID
+GET {{WorkoutTracker.Api_HostAddress}}/api/exercises/1
+Accept: application/json
+
+### Update an exercise
+PUT {{WorkoutTracker.Api_HostAddress}}/api/exercises/1
+Content-Type: application/json
+
+{
+  "name": "Incline Bench Press",
+  "category": "Strength",
+  "muscleGroup": "Upper Chest"
+}
+
+### Delete an exercise
+DELETE {{WorkoutTracker.Api_HostAddress}}/api/exercises/1
