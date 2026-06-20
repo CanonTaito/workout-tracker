@@ -61,6 +61,8 @@ Prerequisites: Azure App Service already created (F1 Free tier).
 ## Progress
 
 | Day | What was built |
-|---|---|
+|---|---|---|
 | 1 | .NET 10 Minimal API scaffold, Exercise CRUD, EF Core + SQLite, xUnit tests |
 | 2 | Deployed to Azure App Service (F1 Free), live API verified |
+| 3 | WorkoutSession + WorkoutSet endpoints, seed data, test refactoring |
+| 4 | GitHub Actions CI/CD pipeline, test isolation fix |
