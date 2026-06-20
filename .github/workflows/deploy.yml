@@ -1,0 +1,39 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore src/backend/WorkoutTracker.slnx
+
+      - name: Build
+        run: dotnet build src/backend/WorkoutTracker.slnx --no-restore
+
+      - name: Test
+        run: dotnet test src/backend/WorkoutTracker.Tests --no-build
+
+      - name: Publish
+        run: dotnet publish src/backend/WorkoutTracker.Api -c Release -o publish
+
+      - name: Deploy to Azure
+        if: github.event_name == 'push'
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: workout-tracker-api
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: publish

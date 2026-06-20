@@ -11,7 +11,7 @@ public static class ExerciseEndpoints
         var group = app.MapGroup("/api/exercises");
 
         group.MapGet("/", async (AppDbContext db) =>
-            await db.Exercises.OrderBy(e => e.Name).ToListAsync());
+            await db.Exercises.OrderBy(e => e.Id).ToListAsync());
 
         group.MapGet("/{id:int}", async (int id, AppDbContext db) =>
         {

@@ -30,3 +30,47 @@ Content-Type: application/json
 
 ### Delete an exercise
 DELETE {{WorkoutTracker.Api_HostAddress}}/api/exercises/1
+
+
+### List all sessions
+GET {{WorkoutTracker.Api_HostAddress}}/api/sessions/
+Accept: application/json
+
+### Create a session
+POST {{WorkoutTracker.Api_HostAddress}}/api/sessions/
+Content-Type: application/json
+
+{
+  "date": "2026-06-18T06:00:00",
+  "durationMinutes": 60,
+  "notes": "Morning push day"
+}
+
+### Get session by ID
+GET {{WorkoutTracker.Api_HostAddress}}/api/sessions/1
+Accept: application/json
+
+### Update a session
+PUT {{WorkoutTracker.Api_HostAddress}}/api/sessions/1
+Content-Type: application/json
+
+{
+  "date": "2026-06-18T06:00:00",
+  "durationMinutes": 75,
+  "notes": "Morning push day - added extra accessories"
+}
+
+### Add a set to a session
+POST {{WorkoutTracker.Api_HostAddress}}/api/sessions/1/sets/
+Content-Type: application/json
+
+{
+  "exerciseId": 1,
+  "sets": 3,
+  "reps": 10,
+  "weightKg": 80,
+  "rpe": 8
+}
+
+### Delete a session
+DELETE {{WorkoutTracker.Api_HostAddress}}/api/sessions/1
