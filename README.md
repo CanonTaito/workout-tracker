@@ -5,7 +5,7 @@ A full-stack workout logging application. Log your daily workouts, track exercis
 ## Tech Stack
 
 - **Backend:** .NET 10 Minimal API + EF Core + SQLite
-- **Frontend:** React + TypeScript + Tailwind CSS (coming soon)
+- **Frontend:** React + TypeScript + Tailwind CSS
 - **Infrastructure:** Azure App Service (F1 Free), Bicep
 
 ## Live API
@@ -31,7 +31,7 @@ src/
 │   ├── WorkoutTracker.Api/    # .NET 10 Minimal API
 │   ├── WorkoutTracker.Tests/  # xUnit tests
 │   └── WorkoutTracker.slnx
-└── frontend/                  # React + TypeScript (planned)
+└── frontend/                  # React + TypeScript
 infra/                         # Bicep templates + deploy script
 ```
 
@@ -61,8 +61,9 @@ Prerequisites: Azure App Service already created (F1 Free tier).
 ## Progress
 
 | Day | What was built |
-|---|---|---|
+|---|---|
 | 1 | .NET 10 Minimal API scaffold, Exercise CRUD, EF Core + SQLite, xUnit tests |
 | 2 | Deployed to Azure App Service (F1 Free), live API verified |
 | 3 | WorkoutSession + WorkoutSet endpoints, seed data, test refactoring |
 | 4 | GitHub Actions CI/CD pipeline, test isolation fix |
+| 5 | React + TypeScript + Vite scaffold, Tailwind v4 setup, exercise table with API fetch, CORS configuration |
