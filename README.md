@@ -67,3 +67,4 @@ Prerequisites: Azure App Service already created (F1 Free tier).
 | 3 | WorkoutSession + WorkoutSet endpoints, seed data, test refactoring |
 | 4 | GitHub Actions CI/CD pipeline, test isolation fix |
 | 5 | React + TypeScript + Vite scaffold, Tailwind v4 setup, exercise table with API fetch, CORS configuration |
+| 6 | Extract ExerciseTable, ExerciseRow, ConfirmDialog components; add inline edit and delete with confirmation |
