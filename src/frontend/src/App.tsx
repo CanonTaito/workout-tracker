@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Exercise } from './types';
 import AddExerciseForm from './components/AddExerciseForm';
+import ExerciseTable from './components/ExerciseTable';
 
 function App() {
   const [showForm, setShowForm] = useState(false);
@@ -11,6 +12,23 @@ function App() {
     setShowForm(false);
     setExercises((prev) => [...prev, exercise]);
   };
+
+  const handleSaveExercise = async (id: number, updated: Partial<Exercise>) => {
+    const response = await fetch(`/api/exercises/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    });
+    if (!response.ok) return;
+    const saved = await response.json();
+    setExercises((prev) => prev.map((ex) => (ex.id === id ? saved : ex)));
+};
+
+const handleDeleteExercise = async (id: number) => {
+  const response = await fetch(`/api/exercises/${id}`, { method: "DELETE" });
+  if (!response.ok) return;
+  setExercises((prev) => prev.filter((ex) => ex.id !== id));
+};
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -47,24 +65,7 @@ function App() {
       {showForm ? (
         <AddExerciseForm onExerciseAdded={handleExerciseAdded} />
       ) : (
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="border-b border-gray-700 text-left text-gray-400 uppercase text-sm">
-              <th className="py-3 px-4">Name</th>
-              <th className="py-3 px-4">Category</th>
-              <th className="py-3 px-4">Muscle Group</th>
-            </tr>
-          </thead>
-          <tbody>
-            {exercises.map((ex) => (
-              <tr key={ex.id} className="border-b border-gray-800 hover:bg-gray-800">
-                <td className="py-3 px-4 font-medium">{ex.name}</td>
-                <td className="py-3 px-4 text-gray-400">{ex.category}</td>
-                <td className="py-3 px-4 text-gray-400">{ex.muscleGroup}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ExerciseTable exercises={exercises} onSave={handleSaveExercise} onDelete={handleDeleteExercise} />
       )}
     </div>
   );
