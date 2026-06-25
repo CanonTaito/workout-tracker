@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import type { Exercise } from './types';
 import AddExerciseForm from './components/AddExerciseForm';
 import ExerciseTable from './components/ExerciseTable';
+import SessionList from './components/SessionList';
 
 function App() {
+  const [page, setPage] = useState<"exercises" | "sessions">("exercises");
   const [showForm, setShowForm] = useState(false);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,20 +54,40 @@ const handleDeleteExercise = async (id: number) => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Exercises</h1>
+      <div className="flex gap-4 mb-6">
         <button
-          onClick={() => setShowForm(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => setPage("exercises")}
+          className={`text-3xl font-bold ${page === "exercises" ? "text-blue-400" : "text-gray-400 hover:text-gray-200"}`}
         >
-          Add Exercise
+          Exercises
+        </button>
+        <button
+          onClick={() => setPage("sessions")}
+          className={`text-3xl font-bold ${page === "sessions" ? "text-blue-400" : "text-gray-400 hover:text-gray-200"}`}
+        >
+          Sessions
         </button>
       </div>
 
-      {showForm ? (
-        <AddExerciseForm onExerciseAdded={handleExerciseAdded} />
+      {page === "exercises" ? (
+        <>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold">Exercises</h1>
+            <button
+              onClick={() => setShowForm(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Add Exercise
+            </button>
+          </div>
+          {showForm ? (
+            <AddExerciseForm onExerciseAdded={handleExerciseAdded} />
+          ) : (
+            <ExerciseTable exercises={exercises} onSave={handleSaveExercise} onDelete={handleDeleteExercise} />
+          )}
+        </>
       ) : (
-        <ExerciseTable exercises={exercises} onSave={handleSaveExercise} onDelete={handleDeleteExercise} />
+        <SessionList />
       )}
     </div>
   );
