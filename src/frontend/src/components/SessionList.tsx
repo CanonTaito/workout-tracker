@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { WorkoutSession } from "../types";
+import SessionDetail from "./SessionDetail";
 
 export default function SessionList() {
 
@@ -10,6 +11,7 @@ export default function SessionList() {
   const [duration, setDuration] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -27,28 +29,37 @@ export default function SessionList() {
     fetchSessions();
   }, []);
 
-const handleCreate = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError(null);
-  try {
-    const response = await fetch("/api/sessions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date, durationMinutes: Number(duration), notes }),
-    });
-    if (!response.ok) throw new Error("Failed to create session");
-    const created: WorkoutSession = await response.json();
-    setSessions((prev) => [created, ...prev]);
-    setShowForm(false);
-    setDate("");
-    setDuration("");
-    setNotes("");
-  } catch (err) {
-    setError(err instanceof Error ? err.message : "Something went wrong");
-  }
-};
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    try {
+      const response = await fetch("/api/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date, durationMinutes: Number(duration), notes }),
+      });
+      if (!response.ok) throw new Error("Failed to create session");
+      const created: WorkoutSession = await response.json();
+      setSessions((prev) => [created, ...prev]);
+      setShowForm(false);
+      setDate("");
+      setDuration("");
+      setNotes("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    }
+  };
 
-if (loading) return <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center">Loading sessions...</div>;
+  if (loading) return <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center">Loading sessions...</div>;
+  
+  if (selectedSessionId !== null) {
+    return (
+      <SessionDetail
+        sessionId={selectedSessionId}
+        onBack={() => setSelectedSessionId(null)}
+      />
+    );
+  }
 
   return (
     <div>
@@ -101,7 +112,7 @@ if (loading) return <div className="min-h-screen bg-gray-900 text-gray-100 flex 
       )}
       <div className="space-y-4">
         {sessions.map((session) => (
-          <div key={session.id} className="bg-gray-800 p-4 rounded">
+          <div key={session.id} onClick={() => setSelectedSessionId(session.id)} className="bg-gray-800 p-4 rounded cursor-pointer hover:bg-gray-700">
             <p className="font-semibold text-lg">
               {new Date(session.date).toLocaleDateString()}
             </p>
