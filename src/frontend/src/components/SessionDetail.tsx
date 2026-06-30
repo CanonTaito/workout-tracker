@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
 import type { WorkoutSession, WorkoutSet, Exercise } from "../types";
 import AddSetForm from "./AddSetForm";
+import ConfirmDialog from "./ConfirmDialog";
 
 interface Props {
   sessionId: number;
   onBack: () => void;
+  onDeleteSession: (id: number) => void;
 }
 
-export default function SessionDetail({ sessionId, onBack }: Props) {
+export default function SessionDetail({ sessionId, onBack, onDeleteSession }: Props) {
   const [session, setSession] = useState<WorkoutSession | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,11 +48,28 @@ export default function SessionDetail({ sessionId, onBack }: Props) {
       .then((data) => setSession(data));
   };
 
+  const handleDelete = async() => {
+    await fetch(`/api/sessions/${sessionId}`, { method: "DELETE"});
+    setShowDeleteConfirm(false);
+    onDeleteSession(sessionId);
+  }
+
   return (
     <div>
-      <button onClick={onBack} className="text-blue-400 hover:text-blue-300 mb-4">
-        ← Back to Sessions
-      </button>
+  <div className="flex justify-between items-center mb-4">
+    <button onClick={onBack} className="text-blue-400 hover:text-blue-300">
+      ← Back to Sessions
+    </button>
+    <button onClick={() => setShowDeleteConfirm(true)} className="text-red-400 hover:text-red-300 text-sm">
+      Delete Session
+    </button>
+  </div>
+  <ConfirmDialog
+    isOpen={showDeleteConfirm}
+    message="Delete this session and all its sets?"
+    onConfirm={handleDelete}
+    onCancel={() => setShowDeleteConfirm(false)}
+  />
 
       <h1 className="text-3xl font-bold mb-2">
         {session && new Date(session.date).toLocaleDateString()}

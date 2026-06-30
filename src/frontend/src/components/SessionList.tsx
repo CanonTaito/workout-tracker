@@ -57,6 +57,10 @@ export default function SessionList() {
       <SessionDetail
         sessionId={selectedSessionId}
         onBack={() => setSelectedSessionId(null)}
+        onDeleteSession={(id) => {
+          setSessions((prev) => prev.filter((s) => s.id !== id));
+          setSelectedSessionId(null);
+  }}
       />
     );
   }
