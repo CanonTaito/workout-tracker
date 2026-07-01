@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import type { WorkoutSession } from "../types";
 import SessionDetail from "./SessionDetail";
 
-export default function SessionList() {
+interface Props {
+  initialSessionId?: number;
+  onCloseSession?: () => void;
+}
+
+export default function SessionList({ initialSessionId, onCloseSession }: Props) {
 
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +33,12 @@ export default function SessionList() {
     };
     fetchSessions();
   }, []);
+
+  useEffect(() => {
+    if (initialSessionId) {
+      setSelectedSessionId(initialSessionId);
+    }
+  }, [initialSessionId]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +67,7 @@ export default function SessionList() {
     return (
       <SessionDetail
         sessionId={selectedSessionId}
-        onBack={() => setSelectedSessionId(null)}
+        onBack={() => { setSelectedSessionId(null); onCloseSession?.(); }}
         onDeleteSession={(id) => {
           setSessions((prev) => prev.filter((s) => s.id !== id));
           setSelectedSessionId(null);

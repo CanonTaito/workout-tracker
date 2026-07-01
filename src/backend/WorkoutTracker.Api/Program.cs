@@ -32,6 +32,7 @@ app.UseHttpsRedirection();
 
 app.MapExerciseEndpoints();
 app.MapWorkoutSessionEndpoints();
+app.MapDashboardEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {
