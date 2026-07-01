@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import type { WorkoutSession } from "../types";
-import SessionDetail from "./SessionDetail";
 
-interface Props {
-  initialSessionId?: number;
-  onCloseSession?: () => void;
-}
-
-export default function SessionList({ initialSessionId, onCloseSession }: Props) {
+export default function SessionList() {
 
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +11,6 @@ export default function SessionList({ initialSessionId, onCloseSession }: Props)
   const [duration, setDuration] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -33,12 +27,6 @@ export default function SessionList({ initialSessionId, onCloseSession }: Props)
     };
     fetchSessions();
   }, []);
-
-  useEffect(() => {
-    if (initialSessionId) {
-      setSelectedSessionId(initialSessionId);
-    }
-  }, [initialSessionId]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,19 +50,6 @@ export default function SessionList({ initialSessionId, onCloseSession }: Props)
   };
 
   if (loading) return <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center">Loading sessions...</div>;
-  
-  if (selectedSessionId !== null) {
-    return (
-      <SessionDetail
-        sessionId={selectedSessionId}
-        onBack={() => { setSelectedSessionId(null); onCloseSession?.(); }}
-        onDeleteSession={(id) => {
-          setSessions((prev) => prev.filter((s) => s.id !== id));
-          setSelectedSessionId(null);
-  }}
-      />
-    );
-  }
 
   return (
     <div>
@@ -127,7 +102,11 @@ export default function SessionList({ initialSessionId, onCloseSession }: Props)
       )}
       <div className="space-y-4">
         {sessions.map((session) => (
-          <div key={session.id} onClick={() => setSelectedSessionId(session.id)} className="bg-gray-800 p-4 rounded cursor-pointer hover:bg-gray-700">
+          <Link
+            key={session.id}
+            to={`/sessions/${session.id}`}
+            className="block bg-gray-800 p-4 rounded cursor-pointer hover:bg-gray-700"
+          >
             <p className="font-semibold text-lg">
               {new Date(session.date).toLocaleDateString()}
             </p>
@@ -135,7 +114,7 @@ export default function SessionList({ initialSessionId, onCloseSession }: Props)
             {session.notes && (
               <p className="text-gray-400 mt-2">{session.notes}</p>
             )}
-          </div>
+          </Link>
         ))}
       </div>
     </div>

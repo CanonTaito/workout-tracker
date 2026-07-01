@@ -1,55 +1,33 @@
-import { useState } from 'react';
-import Dashboard from './components/Dashboard';
-import ExerciseList from './components/ExerciseList';
-import SessionList from './components/SessionList';
+import { Routes, Route, NavLink } from "react-router-dom";
+import Dashboard from "./components/Dashboard";
+import ExerciseList from "./components/ExerciseList";
+import SessionList from "./components/SessionList";
+import SessionDetail from "./components/SessionDetail";
 
 function App() {
-  const [page, setPage] = useState<"dashboard" | "sessions" | "exercises">("dashboard");
-  const [initialSessionId, setInitialSessionId] = useState<number | null>(null);
-
-  const handleNavigate = (p: "dashboard" | "sessions" | "exercises") => {
-    setPage(p);
-  };
-
-  const handleSelectSession = (id: number) => {
-    setInitialSessionId(id);
-    setPage("sessions");
-  };
-
-  const handleCloseSession = () => {
-    setInitialSessionId(null);
-  };
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `text-3xl font-bold ${isActive ? "text-blue-400" : "text-gray-400 hover:text-gray-200"}`;
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
       <div className="flex gap-4 mb-6">
-        <button
-          onClick={() => setPage("dashboard")}
-          className={`text-3xl font-bold ${page === "dashboard" ? "text-blue-400" : "text-gray-400 hover:text-gray-200"}`}
-        >
+        <NavLink to="/" end className={linkClass}>
           Dashboard
-        </button>
-        <button
-          onClick={() => setPage("sessions")}
-          className={`text-3xl font-bold ${page === "sessions" ? "text-blue-400" : "text-gray-400 hover:text-gray-200"}`}
-        >
+        </NavLink>
+        <NavLink to="/sessions" className={linkClass}>
           Sessions
-        </button>
-        <button
-          onClick={() => setPage("exercises")}
-          className={`text-3xl font-bold ${page === "exercises" ? "text-blue-400" : "text-gray-400 hover:text-gray-200"}`}
-        >
+        </NavLink>
+        <NavLink to="/exercises" className={linkClass}>
           Exercises
-        </button>
+        </NavLink>
       </div>
 
-      {page === "dashboard" && (
-        <Dashboard onNavigate={handleNavigate} onSelectSession={handleSelectSession} />
-      )}
-      {page === "exercises" && <ExerciseList />}
-      {page === "sessions" && (
-        <SessionList initialSessionId={initialSessionId ?? undefined} onCloseSession={handleCloseSession} />
-      )}
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/sessions" element={<SessionList />} />
+        <Route path="/sessions/:id" element={<SessionDetail />} />
+        <Route path="/exercises" element={<ExerciseList />} />
+      </Routes>
     </div>
   );
 }

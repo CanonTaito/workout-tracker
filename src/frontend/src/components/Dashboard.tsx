@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface DashboardStats {
   totalWorkouts: number;
@@ -7,12 +8,8 @@ interface DashboardStats {
   recentSessions: { id: number; date: string; durationMinutes: number; notes?: string }[];
 }
 
-interface Props {
-  onNavigate: (page: "dashboard" | "sessions" | "exercises") => void;
-  onSelectSession: (id: number) => void;
-}
-
-export default function Dashboard({ onNavigate, onSelectSession }: Props) {
+export default function Dashboard() {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,10 +54,10 @@ export default function Dashboard({ onNavigate, onSelectSession }: Props) {
         <h1 className="text-3xl font-bold mb-4">Welcome to Workout Tracker</h1>
         <p className="text-gray-400 mb-8">Start by adding an exercise or logging your first session.</p>
         <div className="flex gap-4">
-          <button onClick={() => onNavigate("sessions")} className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded text-lg font-semibold">
+          <button onClick={() => navigate("/sessions")} className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded text-lg font-semibold">
             New Session
           </button>
-          <button onClick={() => onNavigate("exercises")} className="bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded text-lg font-semibold">
+          <button onClick={() => navigate("/exercises")} className="bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded text-lg font-semibold">
             Add Exercise
           </button>
         </div>
@@ -86,7 +83,7 @@ export default function Dashboard({ onNavigate, onSelectSession }: Props) {
           {stats.recentSessions.map((s) => (
             <div
               key={s.id}
-              onClick={() => { onNavigate("sessions"); onSelectSession(s.id); }}
+              onClick={() => navigate(`/sessions/${s.id}`)}
               className="bg-gray-800 p-4 rounded cursor-pointer hover:bg-gray-700 flex justify-between items-center"
             >
               <div>
@@ -101,10 +98,10 @@ export default function Dashboard({ onNavigate, onSelectSession }: Props) {
 
       <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
       <div className="flex gap-4">
-        <button onClick={() => onNavigate("sessions")} className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+        <button onClick={() => navigate("/sessions")} className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
           New Session
         </button>
-        <button onClick={() => onNavigate("exercises")} className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded">
+        <button onClick={() => navigate("/exercises")} className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded">
           Add Exercise
         </button>
       </div>

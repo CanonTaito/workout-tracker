@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import type { WorkoutSession, WorkoutSet, Exercise } from "../types";
 import AddSetForm from "./AddSetForm";
 import ConfirmDialog from "./ConfirmDialog";
 import SetRow from "./SetRow";
 
-interface Props {
-  sessionId: number;
-  onBack: () => void;
-  onDeleteSession: (id: number) => void;
-}
+export default function SessionDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const sessionId = Number(id);
 
-export default function SessionDetail({ sessionId, onBack, onDeleteSession }: Props) {
   const [session, setSession] = useState<WorkoutSession | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,7 +79,7 @@ export default function SessionDetail({ sessionId, onBack, onDeleteSession }: Pr
   const handleDelete = async() => {
     await fetch(`/api/sessions/${sessionId}`, { method: "DELETE"});
     setShowDeleteConfirm(false);
-    onDeleteSession(sessionId);
+    navigate("/sessions");
   }
 
   const handleEditSession = () => {
@@ -110,7 +109,7 @@ export default function SessionDetail({ sessionId, onBack, onDeleteSession }: Pr
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <button onClick={onBack} className="text-blue-400 hover:text-blue-300">
+        <button onClick={() => navigate("/sessions")} className="text-blue-400 hover:text-blue-300">
           ← Back to Sessions
         </button>
         <div className="flex gap-2">
