@@ -38,6 +38,28 @@ public static class WorkoutSessionEndpoints
             return Results.Created($"/api/sessions/{id}/sets/{set.Id}", set);
         });
 
+        group.MapPut("/{sessionId:int}/sets/{setId:int}", async (int sessionId, int setId, WorkoutSet updatedSet, AppDbContext db) =>
+        {
+            var set = await db.WorkoutSets.FirstOrDefaultAsync(s => s.Id == setId && s.WorkoutSessionId == sessionId);
+            if (set is null) return Results.NotFound();
+            set.ExerciseId = updatedSet.ExerciseId;
+            set.Sets = updatedSet.Sets;
+            set.Reps = updatedSet.Reps;
+            set.WeightKg = updatedSet.WeightKg;
+            set.Rpe = updatedSet.Rpe;
+            await db.SaveChangesAsync();
+            return Results.Ok(set);
+        });
+
+        group.MapDelete("/{sessionId:int}/sets/{setId:int}", async (int sessionId, int setId, AppDbContext db) =>
+        {
+            var set = await db.WorkoutSets.FirstOrDefaultAsync(s => s.Id == setId && s.WorkoutSessionId == sessionId);
+            if (set is null) return Results.NotFound();
+            db.WorkoutSets.Remove(set);
+            await db.SaveChangesAsync();
+            return Results.NoContent();
+        });
+
         group.MapPut("/{id:int}", async (int id, WorkoutSession updated, AppDbContext db) =>
         {
             var session = await db.WorkoutSessions.FindAsync(id);
