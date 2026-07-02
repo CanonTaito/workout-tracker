@@ -62,7 +62,7 @@ export default function ExerciseList() {
         </button>
       </div>
       {showForm ? (
-        <AddExerciseForm onExerciseAdded={handleExerciseAdded} />
+        <AddExerciseForm onExerciseAdded={handleExerciseAdded} onCancel={() => setShowForm(false)} />
       ) : (
         <ExerciseTable exercises={exercises} onSave={handleSaveExercise} onDelete={handleDeleteExercise} />
       )}

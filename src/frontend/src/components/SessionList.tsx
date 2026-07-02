@@ -64,7 +64,7 @@ export default function SessionList() {
       </div>
       {showForm && (
         <form onSubmit={handleCreate} className="bg-gray-800 p-4 rounded mb-6">
-            {error && <div className="bg-red-500 text-white p-2 rounded mb-4">{error}</div>}
+          {error && <div className="bg-red-500 text-white p-2 rounded mb-4">{error}</div>}
           <div className="mb-4">
             <label className="block text-gray-400 mb-1">Date</label>
             <input
