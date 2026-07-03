@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -11,5 +12,9 @@ export default defineConfig({
         secure: false,
       },
     },
+  },
+  test: {
+    environment: "jsdom",
+    setupFiles: "./src/test/setup.ts",
   },
 });

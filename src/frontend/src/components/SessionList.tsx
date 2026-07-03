@@ -11,6 +11,7 @@ export default function SessionList() {
   const [duration, setDuration] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -30,6 +31,7 @@ export default function SessionList() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     setError(null);
     try {
       const response = await fetch("/api/sessions", {
@@ -46,6 +48,8 @@ export default function SessionList() {
       setNotes("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -95,8 +99,8 @@ export default function SessionList() {
               placeholder="Optional notes..."
             />
           </div>
-          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-            Create Session
+          <button type="submit" disabled={submitting} className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2 px-4 rounded">
+            {submitting ? "Saving..." : "Create Session"}
           </button>
         </form>
       )}

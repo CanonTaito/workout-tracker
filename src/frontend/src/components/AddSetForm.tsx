@@ -14,6 +14,7 @@ export default function AddSetForm({ sessionId, exercises, onSetAdded }: Props) 
   const [weightKg, setWeightKg] = useState(0);
   const [rpe, setRpe] = useState<number | "">("");
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +28,7 @@ export default function AddSetForm({ sessionId, exercises, onSetAdded }: Props) 
       rpe: rpe === "" ? null : rpe,
     };
 
+    setSubmitting(true);
     try {
       const res = await fetch(`/api/sessions/${sessionId}/sets`, {
         method: "POST",
@@ -42,6 +44,8 @@ export default function AddSetForm({ sessionId, exercises, onSetAdded }: Props) 
       setRpe("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -119,8 +123,8 @@ export default function AddSetForm({ sessionId, exercises, onSetAdded }: Props) 
         </div>
       </div>
 
-      <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-        Add Set
+      <button type="submit" disabled={submitting} className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2 px-4 rounded">
+        {submitting ? "Saving..." : "Add Set"}
       </button>
     </form>
   );

@@ -1,6 +1,7 @@
 import { Routes, Route, NavLink } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import ExerciseList from "./components/ExerciseList";
+import NotFound from "./components/NotFound";
 import SessionList from "./components/SessionList";
 import SessionDetail from "./components/SessionDetail";
 
@@ -27,6 +28,7 @@ function App() {
         <Route path="/sessions" element={<SessionList />} />
         <Route path="/sessions/:id" element={<SessionDetail />} />
         <Route path="/exercises" element={<ExerciseList />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );

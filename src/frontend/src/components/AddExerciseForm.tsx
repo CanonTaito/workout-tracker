@@ -11,9 +11,11 @@ export default function AddExerciseForm({ onExerciseAdded, onCancel }: Props) {
   const [category, setCategory] = useState('');
   const [muscleGroup, setMuscleGroup] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     setError(null);
     try {
       const response = await fetch('/api/exercises', {
@@ -32,6 +34,8 @@ export default function AddExerciseForm({ onExerciseAdded, onCancel }: Props) {
       setMuscleGroup('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -40,8 +44,9 @@ export default function AddExerciseForm({ onExerciseAdded, onCancel }: Props) {
       <h2 className="text-xl font-bold mb-4">Add New Exercise</h2>
       {error && <div className="bg-red-500 text-white p-2 rounded mb-4">{error}</div>}
       <div className="mb-4">
-        <label className="block text-gray-400 mb-1">Name</label>
+        <label htmlFor="name" className="block text-gray-400 mb-1">Name</label>
         <input
+          id="name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -51,8 +56,9 @@ export default function AddExerciseForm({ onExerciseAdded, onCancel }: Props) {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-gray-400 mb-1">Category</label>
+        <label htmlFor="category" className="block text-gray-400 mb-1">Category</label>
         <input
+          id="category"
           type="text"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
@@ -62,8 +68,9 @@ export default function AddExerciseForm({ onExerciseAdded, onCancel }: Props) {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-gray-400 mb-1">Muscle Group</label>
+        <label htmlFor="muscleGroup" className="block text-gray-400 mb-1">Muscle Group</label>
         <input
+          id="muscleGroup"
           type="text"
           value={muscleGroup}
           onChange={(e) => setMuscleGroup(e.target.value)}
@@ -73,8 +80,8 @@ export default function AddExerciseForm({ onExerciseAdded, onCancel }: Props) {
         />
       </div>
       <div className="flex gap-2">
-        <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Add Exercise
+        <button type="submit" disabled={submitting} className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded">
+          {submitting ? "Saving..." : "Add Exercise"}
         </button>
         <button type="button" onClick={onCancel} className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded">
           Cancel
