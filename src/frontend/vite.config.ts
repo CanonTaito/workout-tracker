@@ -4,6 +4,14 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: "assets/[name]-[hash].mjs",
+        chunkFileNames: "assets/[name]-[hash].mjs",
+      },
+    },
+  },
   server: {
     port: 5173,
     proxy: {
