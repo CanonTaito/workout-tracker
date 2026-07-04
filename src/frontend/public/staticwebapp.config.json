@@ -7,7 +7,7 @@
     {
       "route": "/api/*",
       "allowedRoles": ["anonymous"],
-      "rewrite": "https://workout-tracker-api-fxf9hfb4fwhvazfj.australiaeast-01.azurewebsites.net/api/*"
+      "rewrite": "https://workout-tracker-api-fxf9hfb4fwhvazfj.australiaeast-01.azurewebsites.net/api/{wildcard}"
     }
   ]
 }
