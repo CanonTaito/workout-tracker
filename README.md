@@ -87,3 +87,4 @@ Prerequisites: Azure App Service already created (F1 Free tier).
 | 6 | Extract ExerciseTable, ExerciseRow, ConfirmDialog components; add inline edit and delete with confirmation |
 | 7 | Session list with create form, session detail with nested sets table, add set form with exercise dropdown and sets/reps/weight/RPE |
 | 8 | Dashboard landing page with stats cards, React Router navigation, session header inline edit, delete session with confirmation, set inline edit/delete, form submitting states, Vitest + RTL test suite (10 tests) |
+| 9 | Azure Static Web App deployment (attempted), frontend served from App Service as single URL, GitHub project board with 6 epics and 23 stories |
