@@ -8,7 +8,7 @@
       "route": "/api/*",
       "allowedRoles": ["anonymous"],
       "redirect": "https://workout-tracker-api-fxf9hfb4fwhvazfj.australiaeast-01.azurewebsites.net/api/{wildcard}",
-      "statusCode": 307
+      "statusCode": 302
     }
   ]
 }
