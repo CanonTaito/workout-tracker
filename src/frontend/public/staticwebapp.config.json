@@ -1,13 +1,13 @@
 {
   "navigationFallback": {
     "rewrite": "index.html",
-    "exclude": ["/api/*"]
+    "exclude": ["/api/{*rest}"]
   },
   "routes": [
     {
-      "route": "/api/*",
+      "route": "/api/{*rest}",
       "allowedRoles": ["anonymous"],
-      "rewrite": "https://workout-tracker-api-fxf9hfb4fwhvazfj.australiaeast-01.azurewebsites.net/api/{wildcard}"
+      "rewrite": "https://workout-tracker-api-fxf9hfb4fwhvazfj.australiaeast-01.azurewebsites.net/api/{rest}"
     }
   ]
 }
