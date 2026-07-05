@@ -12,6 +12,9 @@ publish*/
 *.zip
 publish-profile.xml
 
+# Frontend build output (copied to backend wwwroot during CI)
+wwwroot/
+
 # IDE
 .vs/
 .vscode/

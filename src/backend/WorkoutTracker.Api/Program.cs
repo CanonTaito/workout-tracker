@@ -12,7 +12,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://lively-smoke-0a80cc800.7.azurestaticapps.net")
+        policy.WithOrigins("http://localhost:5173")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -30,9 +30,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.UseCors();
+
 app.MapExerciseEndpoints();
 app.MapWorkoutSessionEndpoints();
 app.MapDashboardEndpoints();
+
+app.MapFallbackToFile("index.html");
 
 using (var scope = app.Services.CreateScope())
 {
@@ -40,8 +47,6 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
     DbInitialiser.Seed(db);
 }
-
-app.UseCors();
 
 app.Run();
 
