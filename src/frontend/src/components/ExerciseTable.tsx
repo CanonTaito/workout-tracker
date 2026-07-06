@@ -8,6 +8,10 @@ interface Props {
 }
 
 export default function ExerciseTable({ exercises, onSave, onDelete }: Props) {
+  if (exercises.length === 0) {
+    return <p className="text-gray-500">No exercises found.</p>;
+  }
+
   return (
     <table className="w-full border-collapse">
       <thead>

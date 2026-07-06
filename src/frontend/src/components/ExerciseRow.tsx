@@ -14,12 +14,28 @@ export default function ExerciseRow({ exercise, onSave, onDelete }: Props) {
   const [category, setCategory] = useState(exercise.category);
   const [muscleGroup, setMuscleGroup] = useState(exercise.muscleGroup);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [nameError, setNameError] = useState(false);
+
+  const handleSave = () => {
+    if (!name.trim()) {
+      setNameError(true);
+      return;
+    }
+    onSave(exercise.id, { name: name.trim(), category: category.trim(), muscleGroup: muscleGroup.trim() });
+    setEditing(false);
+    setNameError(false);
+  };
 
   if (editing) {
     return (
       <tr className="border-b border-gray-800">
         <td className="py-3 px-4">
-          <input value={name} onChange={e => setName(e.target.value)} className="bg-gray-700 text-gray-100 p-1 rounded w-full" />
+          <input
+            value={name}
+            onChange={e => { setName(e.target.value); if (nameError) setNameError(false); }}
+            className={`bg-gray-700 text-gray-100 p-1 rounded w-full border ${nameError ? 'border-red-500' : 'border-transparent'}`}
+          />
+          {nameError && <p className="text-red-400 text-sm mt-1">Name is required</p>}
         </td>
         <td className="py-3 px-4">
           <input value={category} onChange={e => setCategory(e.target.value)} className="bg-gray-700 text-gray-100 p-1 rounded w-full" />
@@ -28,7 +44,7 @@ export default function ExerciseRow({ exercise, onSave, onDelete }: Props) {
           <input value={muscleGroup} onChange={e => setMuscleGroup(e.target.value)} className="bg-gray-700 text-gray-100 p-1 rounded w-full" />
         </td>
         <td className="py-3 px-4 flex gap-2">
-          <button onClick={() => { onSave(exercise.id, { name, category, muscleGroup }); setEditing(false); }} className="text-green-400 hover:text-green-300">Save</button>
+          <button onClick={handleSave} className="text-green-400 hover:text-green-300">Save</button>
           <button onClick={() => setEditing(false)} className="text-gray-400 hover:text-gray-300">Cancel</button>
         </td>
       </tr>

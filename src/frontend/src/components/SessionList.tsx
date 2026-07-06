@@ -2,6 +2,12 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import type { WorkoutSession } from "../types";
 import Skeleton from "./Skeleton";
+import { useToast } from "./ToastContext";
+
+interface FormErrors {
+  date?: string;
+  duration?: string;
+}
 
 export default function SessionList() {
 
@@ -11,8 +17,10 @@ export default function SessionList() {
   const [date, setDate] = useState("");
   const [duration, setDuration] = useState("");
   const [notes, setNotes] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [apiError, setApiError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const { addToast } = useToast();
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -30,10 +38,20 @@ export default function SessionList() {
     fetchSessions();
   }, []);
 
+  const validate = (): FormErrors => {
+    const e: FormErrors = {};
+    if (!date) e.date = "Date is required";
+    if (!duration || Number(duration) <= 0) e.duration = "Duration must be greater than 0";
+    return e;
+  };
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    const errors = validate();
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) return;
     setSubmitting(true);
-    setError(null);
+    setApiError(null);
     try {
       const response = await fetch("/api/sessions", {
         method: "POST",
@@ -47,12 +65,17 @@ export default function SessionList() {
       setDate("");
       setDuration("");
       setNotes("");
+      setFormErrors({});
+      addToast("Session created", "success");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setApiError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setSubmitting(false);
     }
   };
+
+  const inputClass = (field: keyof FormErrors) =>
+    `bg-gray-600 text-gray-300 placeholder:text-gray-500 border ${formErrors[field] ? 'border-red-500' : 'border-gray-500'} focus:outline-none focus:ring-2 focus:ring-blue-500 p-2 rounded w-full`;
 
   if (loading) {
     return (
@@ -87,26 +110,26 @@ export default function SessionList() {
       </div>
       {showForm && (
         <form onSubmit={handleCreate} className="bg-gray-800 p-4 rounded mb-6">
-          {error && <div className="bg-red-500 text-white p-2 rounded mb-4">{error}</div>}
+          {apiError && <div className="bg-red-500 text-white p-2 rounded mb-4">{apiError}</div>}
           <div className="mb-4">
             <label className="block text-gray-400 mb-1">Date</label>
             <input
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="bg-gray-600 text-gray-300 placeholder:text-gray-500 border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 p-2 rounded w-full"
-              required
+              onChange={(e) => { setDate(e.target.value); if (formErrors.date) setFormErrors((prev) => ({ ...prev, date: undefined })); }}
+              className={inputClass("date")}
             />
+            {formErrors.date && <p className="text-red-400 text-sm mt-1">{formErrors.date}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-gray-400 mb-1">Duration (minutes)</label>
             <input
               type="number"
               value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              className="bg-gray-600 text-gray-300 placeholder:text-gray-500 border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 p-2 rounded w-full"
-              required
+              onChange={(e) => { setDuration(e.target.value); if (formErrors.duration) setFormErrors((prev) => ({ ...prev, duration: undefined })); }}
+              className={inputClass("duration")}
             />
+            {formErrors.duration && <p className="text-red-400 text-sm mt-1">{formErrors.duration}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-gray-400 mb-1">Notes</label>

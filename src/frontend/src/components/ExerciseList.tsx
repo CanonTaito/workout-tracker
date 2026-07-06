@@ -3,15 +3,26 @@ import type { Exercise } from '../types';
 import AddExerciseForm from './AddExerciseForm';
 import ExerciseTable from './ExerciseTable';
 import Skeleton from './Skeleton';
+import { useToast } from './ToastContext';
 
 export default function ExerciseList() {
   const [showForm, setShowForm] = useState(false);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const { addToast } = useToast();
+
+  const filtered = exercises.filter(
+    (ex) =>
+      ex.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ex.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ex.muscleGroup.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleExerciseAdded = (exercise: Exercise) => {
     setShowForm(false);
     setExercises((prev) => [...prev, exercise]);
+    addToast("Exercise added", "success");
   };
 
   const handleSaveExercise = async (id: number, updated: Partial<Exercise>) => {
@@ -23,12 +34,14 @@ export default function ExerciseList() {
     if (!response.ok) return;
     const saved = await response.json();
     setExercises((prev) => prev.map((ex) => (ex.id === id ? saved : ex)));
+    addToast("Exercise updated", "success");
   };
 
   const handleDeleteExercise = async (id: number) => {
     const response = await fetch(`/api/exercises/${id}`, { method: "DELETE" });
     if (!response.ok) return;
     setExercises((prev) => prev.filter((ex) => ex.id !== id));
+    addToast("Exercise deleted", "success");
   };
 
   useEffect(() => {
@@ -93,10 +106,19 @@ export default function ExerciseList() {
           Add Exercise
         </button>
       </div>
+      {!showForm && exercises.length > 0 && (
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search exercises..."
+          className="bg-gray-700 text-gray-100 placeholder:text-gray-500 p-2 rounded w-full mb-4"
+        />
+      )}
       {showForm ? (
         <AddExerciseForm onExerciseAdded={handleExerciseAdded} onCancel={() => setShowForm(false)} />
       ) : (
-        <ExerciseTable exercises={exercises} onSave={handleSaveExercise} onDelete={handleDeleteExercise} />
+        <ExerciseTable exercises={filtered} onSave={handleSaveExercise} onDelete={handleDeleteExercise} />
       )}
     </>
   );

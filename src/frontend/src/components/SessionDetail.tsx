@@ -5,11 +5,18 @@ import AddSetForm from "./AddSetForm";
 import ConfirmDialog from "./ConfirmDialog";
 import SetRow from "./SetRow";
 import Skeleton from "./Skeleton";
+import { useToast } from "./ToastContext";
+
+interface EditErrors {
+  date?: string;
+  duration?: string;
+}
 
 export default function SessionDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const sessionId = Number(id);
+  const { addToast } = useToast();
 
   const [session, setSession] = useState<WorkoutSession | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -20,6 +27,7 @@ export default function SessionDetail() {
   const [editDate, setEditDate] = useState("");
   const [editDuration, setEditDuration] = useState(0);
   const [editNotes, setEditNotes] = useState("");
+  const [editErrors, setEditErrors] = useState<EditErrors>({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,7 +87,7 @@ export default function SessionDetail() {
     setShowAddForm(false);
     fetch(`/api/sessions/${sessionId}`)
       .then((res) => res.json())
-      .then((data) => setSession(data));
+      .then((data) => { setSession(data); addToast("Set added", "success"); });
   };
 
   const handleUpdateSet = (setId: number, updated: Partial<WorkoutSet>) => {
@@ -93,7 +101,7 @@ export default function SessionDetail() {
         return fetch(`/api/sessions/${sessionId}`);
       })
       .then((res) => res.json())
-      .then((data) => setSession(data))
+      .then((data) => { setSession(data); addToast("Set updated", "success"); })
       .catch((err) => console.error("Failed to update set:", err));
   };
 
@@ -105,6 +113,7 @@ export default function SessionDetail() {
           if (!prev) return prev;
           return { ...prev, sets: prev.sets.filter((s) => s.id !== setId) };
         });
+        addToast("Set deleted", "success");
       })
       .catch((err) => console.error("Failed to delete set:", err));
   };
@@ -112,6 +121,7 @@ export default function SessionDetail() {
   const handleDelete = async() => {
     await fetch(`/api/sessions/${sessionId}`, { method: "DELETE"});
     setShowDeleteConfirm(false);
+    addToast("Session deleted", "success");
     navigate("/sessions");
   }
 
@@ -124,6 +134,11 @@ export default function SessionDetail() {
   };
 
   const handleSaveSession = async () => {
+    const e: EditErrors = {};
+    if (!editDate) e.date = "Date is required";
+    if (editDuration <= 0) e.duration = "Duration must be greater than 0";
+    setEditErrors(e);
+    if (Object.keys(e).length > 0) return;
     const response = await fetch(`/api/sessions/${sessionId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -133,6 +148,8 @@ export default function SessionDetail() {
     const updated = await response.json();
     setSession(updated);
     setEditingSession(false);
+    setEditErrors({});
+    addToast("Session updated", "success");
   };
 
   const handleCancelEdit = () => {
@@ -181,18 +198,20 @@ export default function SessionDetail() {
             <input
               type="date"
               value={editDate}
-              onChange={(e) => setEditDate(e.target.value)}
-              className="bg-gray-700 text-gray-100 p-2 rounded w-full"
+              onChange={(e) => { setEditDate(e.target.value); if (editErrors.date) setEditErrors((prev) => ({ ...prev, date: undefined })); }}
+              className={`bg-gray-700 text-gray-100 p-2 rounded w-full border ${editErrors.date ? 'border-red-500' : 'border-transparent'}`}
             />
+            {editErrors.date && <p className="text-red-400 text-sm mt-1">{editErrors.date}</p>}
           </div>
           <div>
             <label className="block text-gray-400 mb-1">Duration (minutes)</label>
             <input
               type="number"
               value={editDuration}
-              onChange={(e) => setEditDuration(Number(e.target.value))}
-              className="bg-gray-700 text-gray-100 p-2 rounded w-full"
+              onChange={(e) => { setEditDuration(Number(e.target.value)); if (editErrors.duration) setEditErrors((prev) => ({ ...prev, duration: undefined })); }}
+              className={`bg-gray-700 text-gray-100 p-2 rounded w-full border ${editErrors.duration ? 'border-red-500' : 'border-transparent'}`}
             />
+            {editErrors.duration && <p className="text-red-400 text-sm mt-1">{editErrors.duration}</p>}
           </div>
           <div>
             <label className="block text-gray-400 mb-1">Notes</label>

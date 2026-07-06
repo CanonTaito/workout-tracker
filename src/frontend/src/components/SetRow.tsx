@@ -9,6 +9,12 @@ interface Props {
   onDelete: (id: number) => void;
 }
 
+interface Errors {
+  sets?: string;
+  reps?: string;
+  weightKg?: string;
+}
+
 export default function SetRow({ set, exercises, onSave, onDelete }: Props) {
   const [editing, setEditing] = useState(false);
   const [exerciseId, setExerciseId] = useState(set.exerciseId);
@@ -17,11 +23,23 @@ export default function SetRow({ set, exercises, onSave, onDelete }: Props) {
   const [weightKg, setWeightKg] = useState(set.weightKg);
   const [rpe, setRpe] = useState<number | null>(set.rpe ?? null);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
 
   const exerciseMap = new Map<number, string>();
   exercises.forEach((ex) => exerciseMap.set(ex.id, ex.name));
 
+  const validate = (): Errors => {
+    const e: Errors = {};
+    if (sets < 1) e.sets = "Must be at least 1";
+    if (reps < 1) e.reps = "Must be at least 1";
+    if (weightKg < 0) e.weightKg = "Cannot be negative";
+    return e;
+  };
+
   const handleSaveEdit = () => {
+    const validationErrors = validate();
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
     onSave(set.id, {
       exerciseId,
       sets,
@@ -30,7 +48,11 @@ export default function SetRow({ set, exercises, onSave, onDelete }: Props) {
       rpe: rpe ?? undefined,
     });
     setEditing(false);
+    setErrors({});
   };
+
+  const inputClass = (field: keyof Errors) =>
+    `bg-gray-700 text-gray-100 p-1 rounded w-full border ${errors[field] ? 'border-red-500' : 'border-transparent'}`;
 
   if (editing) {
     return (
@@ -52,25 +74,28 @@ export default function SetRow({ set, exercises, onSave, onDelete }: Props) {
           <input
             type="number"
             value={sets}
-            onChange={(e) => setSets(Number(e.target.value))}
-            className="bg-gray-700 text-gray-100 p-1 rounded w-full"
+            onChange={(e) => { setSets(Number(e.target.value)); if (errors.sets) setErrors((prev) => ({ ...prev, sets: undefined })); }}
+            className={inputClass("sets")}
           />
+          {errors.sets && <p className="text-red-400 text-sm mt-1">{errors.sets}</p>}
         </td>
         <td className="py-3 px-4">
           <input
             type="number"
             value={reps}
-            onChange={(e) => setReps(Number(e.target.value))}
-            className="bg-gray-700 text-gray-100 p-1 rounded w-full"
+            onChange={(e) => { setReps(Number(e.target.value)); if (errors.reps) setErrors((prev) => ({ ...prev, reps: undefined })); }}
+            className={inputClass("reps")}
           />
+          {errors.reps && <p className="text-red-400 text-sm mt-1">{errors.reps}</p>}
         </td>
         <td className="py-3 px-4">
           <input
             type="number"
             value={weightKg}
-            onChange={(e) => setWeightKg(Number(e.target.value))}
-            className="bg-gray-700 text-gray-100 p-1 rounded w-full"
+            onChange={(e) => { setWeightKg(Number(e.target.value)); if (errors.weightKg) setErrors((prev) => ({ ...prev, weightKg: undefined })); }}
+            className={inputClass("weightKg")}
           />
+          {errors.weightKg && <p className="text-red-400 text-sm mt-1">{errors.weightKg}</p>}
         </td>
         <td className="py-3 px-4">
           <input
