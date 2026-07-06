@@ -4,6 +4,7 @@ import type { WorkoutSession, WorkoutSet, Exercise } from "../types";
 import AddSetForm from "./AddSetForm";
 import ConfirmDialog from "./ConfirmDialog";
 import SetRow from "./SetRow";
+import Skeleton from "./Skeleton";
 
 export default function SessionDetail() {
   const { id } = useParams();
@@ -40,7 +41,39 @@ export default function SessionDetail() {
     fetchData();
   }, [sessionId]);
 
-  if (loading) return <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center">Loading session...</div>;
+  if (loading) {
+    return (
+      <div className="animate-pulse">
+        <Skeleton className="h-4 w-32 mb-4" />
+        <Skeleton className="h-8 w-48 mb-2" />
+        <Skeleton className="h-4 w-24 mb-6" />
+        <Skeleton className="h-6 w-40 mb-4" />
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b border-gray-700">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <th key={i} className="py-3 px-4 text-left">
+                  <Skeleton className="h-4 w-16" />
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {[1, 2, 3].map((i) => (
+              <tr key={i} className="border-b border-gray-700">
+                {[1, 2, 3, 4, 5, 6].map((j) => (
+                  <td key={j} className="py-3 px-4">
+                    <Skeleton className="h-5 w-16" />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <Skeleton className="h-10 w-24 mt-4" />
+      </div>
+    );
+  }
 
   const handleSetAdded = () => {
     setShowAddForm(false);

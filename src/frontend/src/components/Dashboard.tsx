@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Skeleton from "./Skeleton";
 
 interface DashboardStats {
   totalWorkouts: number;
@@ -42,8 +43,31 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center text-gray-400">
-        Loading dashboard...
+      <div className="animate-pulse">
+        <Skeleton className="h-8 w-40 mb-6" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-gray-800 p-6 rounded">
+              <Skeleton className="h-10 w-16 mb-2" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+          ))}
+        </div>
+        <Skeleton className="h-6 w-48 mb-4" />
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="bg-gray-800 p-4 rounded mb-3 flex justify-between items-center">
+            <div>
+              <Skeleton className="h-5 w-32 mb-2" />
+              <Skeleton className="h-4 w-48" />
+            </div>
+            <Skeleton className="h-5 w-4" />
+          </div>
+        ))}
+        <Skeleton className="h-6 w-32 mb-4 mt-8" />
+        <div className="flex gap-4">
+          <Skeleton className="h-10 w-32" />
+          <Skeleton className="h-10 w-32" />
+        </div>
       </div>
     );
   }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Exercise } from '../types';
 import AddExerciseForm from './AddExerciseForm';
 import ExerciseTable from './ExerciseTable';
+import Skeleton from './Skeleton';
 
 export default function ExerciseList() {
   const [showForm, setShowForm] = useState(false);
@@ -48,7 +49,38 @@ export default function ExerciseList() {
     fetchExercises();
   }, []);
 
-  if (loading) return <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center">Loading exercises...</div>;
+  if (loading) {
+    return (
+      <div className="animate-pulse">
+        <div className="flex justify-between items-center mb-6">
+          <Skeleton className="h-8 w-40" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b border-gray-700">
+              {[1, 2, 3, 4].map((i) => (
+                <th key={i} className="py-3 px-4 text-left">
+                  <Skeleton className="h-4 w-20" />
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <tr key={i} className="border-b border-gray-700">
+                {[1, 2, 3, 4].map((j) => (
+                  <td key={j} className="py-3 px-4">
+                    <Skeleton className="h-5 w-24" />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
 
   return (
     <>

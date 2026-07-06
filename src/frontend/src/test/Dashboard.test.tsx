@@ -12,9 +12,9 @@ function renderWithRouter() {
 }
 
 describe("Dashboard", () => {
-  it("shows loading state initially", () => {
-    renderWithRouter();
-    expect(screen.getByText("Loading dashboard...")).toBeInTheDocument();
+  it("shows loading skeleton initially", () => {
+    const { container } = renderWithRouter();
+    expect(container.querySelector(".animate-pulse")).toBeInTheDocument();
   });
 
   it("shows error state with retry button", async () => {

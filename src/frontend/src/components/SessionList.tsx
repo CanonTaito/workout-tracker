@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import type { WorkoutSession } from "../types";
+import Skeleton from "./Skeleton";
 
 export default function SessionList() {
 
@@ -53,7 +54,25 @@ export default function SessionList() {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center">Loading sessions...</div>;
+  if (loading) {
+    return (
+      <div className="animate-pulse">
+        <div className="flex justify-between items-center mb-6">
+          <Skeleton className="h-8 w-40" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="space-y-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="bg-gray-800 p-4 rounded">
+              <Skeleton className="h-5 w-32 mb-2" />
+              <Skeleton className="h-4 w-24 mb-2" />
+              <Skeleton className="h-4 w-48" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
