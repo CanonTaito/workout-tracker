@@ -5,6 +5,7 @@ import NotFound from "./components/NotFound";
 import SessionList from "./components/SessionList";
 import SessionDetail from "./components/SessionDetail";
 import ToastContainer from "./components/ToastContainer";
+import InstallPrompt from "./components/InstallPrompt";
 
 function App() {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -13,6 +14,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
       <ToastContainer />
+      <InstallPrompt />
       <div className="flex gap-4 mb-6">
         <NavLink to="/" end className={linkClass}>
           Dashboard
