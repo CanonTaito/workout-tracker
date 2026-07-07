@@ -4,14 +4,14 @@ A full-stack workout logging application. Log your daily workouts, track exercis
 
 ## Tech Stack
 
-- **Backend:** .NET 10 Minimal API + EF Core + SQLite
-- **Frontend:** React + TypeScript + Tailwind CSS
-- **Infrastructure:** Azure App Service (F1 Free), Bicep
+- **Backend:** .NET 10 Minimal API + EF Core (SQLite dev / SQL Server production)
+- **Frontend:** React + TypeScript + Tailwind CSS + Progressive Web App
+- **Infrastructure:** Azure App Service (F1 Free), Azure SQL Database (free offer), Bicep
 
-## Live API
+## Live App
 
 ```
-https://workout-tracker-api-fxf9hfb4fwhvazfj.australiaeast-01.azurewebsites.net
+https://workout-tracker-api.azurewebsites.net
 ```
 
 | Endpoint | Description |
@@ -44,8 +44,12 @@ src/
 │   ├── WorkoutTracker.Tests/  # xUnit tests (9)
 │   └── WorkoutTracker.slnx
 ├── frontend/
+│   ├── public/
+│   │   ├── favicon.svg
+│   │   ├── pwa-192x192.svg, pwa-512x512.svg  # PWA app icons
+│   │   └── apple-touch-icon.svg
 │   ├── src/
-│   │   ├── components/     # 10 React components
+│   │   ├── components/     # 12 React components (incl. Skeleton, InstallPrompt)
 │   │   ├── test/           # Vitest tests (10)
 │   │   └── types/          # TypeScript interfaces
 │   └── src/main.tsx, App.tsx
@@ -88,3 +92,4 @@ Prerequisites: Azure App Service already created (F1 Free tier).
 | 7 | Session list with create form, session detail with nested sets table, add set form with exercise dropdown and sets/reps/weight/RPE |
 | 8 | Dashboard landing page with stats cards, React Router navigation, session header inline edit, delete session with confirmation, set inline edit/delete, form submitting states, Vitest + RTL test suite (10 tests) |
 | 9 | Azure Static Web App deployment (attempted), frontend served from App Service as single URL, GitHub project board with 6 epics and 23 stories |
+| 10 | Loading skeleton screens, inline form validation, toast notifications, exercise search/filter, Azure SQL Server migration with dual-provider setup, PWA support (manifest, service worker, install prompt) |
