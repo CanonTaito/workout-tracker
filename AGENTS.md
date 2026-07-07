@@ -4,7 +4,7 @@ A full-stack workout logging application. Log daily workouts, track exercises, s
 
 ## Tech Stack
 
-- **Backend:** .NET 10 Minimal API + EF Core + SQLite
+- **Backend:** .NET 10 Minimal API + EF Core (SQLite locally, SQL Server in production)
 - **Frontend:** React + TypeScript + Vite + Tailwind v4
 - **Infrastructure:** Azure App Service (F1 Free), Bicep
 - **CI/CD:** GitHub Actions
@@ -16,8 +16,9 @@ A full-stack workout logging application. Log daily workouts, track exercises, s
 src/
 ├── backend/
 │   ├── WorkoutTracker.Api/
-│   │   ├── Data/           # AppDbContext, DbInitializer (seed)
+│   │   ├── Data/           # AppDbContext, DbInitializer (seed), DesignTimeDbContextFactory
 │   │   ├── Endpoints/      # ExerciseEndpoints, WorkoutSessionEndpoints, DashboardEndpoints
+│   │   ├── Migrations/     # EF Core migrations (SQL Server)
 │   │   └── Program.cs      # Entry point: DI, endpoints, CORS, static files, SPA fallback
 │   ├── WorkoutTracker.Tests/
 │   └── WorkoutTracker.slnx
@@ -44,6 +45,10 @@ dotnet test
 # Run locally
 dotnet run
 # API at https://localhost:5001, Scalar UI at /scalar/v1
+
+# EF Core migrations (SQL Server)
+dotnet ef migrations add <Name>
+dotnet ef database update
 ```
 
 ### Frontend
@@ -81,6 +86,7 @@ Production URL: `https://workout-tracker-api-fxf9hfb4fwhvazfj.australiaeast-01.a
 - **Minimal APIs** over controllers — simpler, matches .NET 10 direction
 - **React Router** over state-based navigation — enables deep-linking (e.g., `/sessions/:id`)
 - **Single App Service** serves both API and SPA — no double URL, no CORS in production
+- **Dual database provider**: SQLite in development (via `appsettings.json`), SQL Server in production (via Azure App Service connection string, set by Bicep). Controlled by `ASPNETCORE_ENVIRONMENT`
 - **`/api` prefix** on all API routes; frontend dev server proxies `/api` to backend
 - **Dashboard at `/`** as the default landing page
 - **Tailwind v4** with `@tailwindcss/vite` plugin (not PostCSS)
@@ -117,17 +123,19 @@ Allowed types: feat, fix, docs, refactor, test, chore, style, perf, ci, build, r
 ## Key Gotchas
 
 - **Azure F1 is 32-bit**: deploy as self-contained x86 (`win-x86`)
-- **SQLite resets on every deploy**: `EnsureCreated()` + `Seed()` runs on App startup. Planned migration to Azure SQL Database (free tier) will fix this
+- **SQLite locally, SQL Server in production**: `Program.cs` checks `IsProduction()` to choose the provider. The connection string is set by Bicep as an App Service connectionstrings config (type: SQLAzure), not in `appsettings.json`
+- **EF Core migrations** are required for SQL Server. `Database.Migrate()` runs on startup in production. For local dev, `Database.EnsureCreated()` is used instead (no migration files needed)
+- **Seed data is idempotent**: `DbInitialiser.Seed` checks `if (db.Exercises.Any()) return;` so it only seeds once
+- **`DesignTimeDbContextFactory`** is used by `dotnet ef` commands to create the DbContext at design time (connects to a local SQL Server that doesn't need to exist; the factory just needs to build the model)
+- **Azure SQL Database free offer**: creates a serverless GP database with 100k vCore sec/month free grant. If the free grant doesn't auto-apply, activate via the Azure SQL hub portal. Do NOT fall back to paid tiers
 - **Frontend build output** copied to `wwwroot/` in the backend publish directory for single-URL serving
 - **CORS** configured for `http://localhost:5173` (dev only); not needed in production since everything comes from one origin
 - **Vite outputs `.mjs`** for SWA compatibility (retained even though SWA was abandoned)
 
 ## Next / Planned Work
 
-Organized on the GitHub project board under 6 epics:
-1. Azure SQL Database migration
-2. UX polish (loading skeletons, form validation, toasts, search/filter)
-3. Progressive Web App
-4. Workout templates (save/load routines)
-5. Exercise progress charts
-6. Azure AD B2C authentication
+Organized on the GitHub project board under 5 remaining epics:
+1. Progressive Web App
+2. Workout templates (save/load routines)
+3. Exercise progress charts
+4. Azure AD B2C authentication
