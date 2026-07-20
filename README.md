@@ -4,9 +4,9 @@ A full-stack workout logging application. Log your daily workouts, track exercis
 
 ## Tech Stack
 
-- **Backend:** .NET 10 Minimal API + EF Core (SQLite dev / SQL Server production)
+- **Backend:** .NET 10 Minimal API + EF Core + SQLite
 - **Frontend:** React + TypeScript + Tailwind CSS + Progressive Web App
-- **Infrastructure:** Azure App Service (F1 Free), Azure SQL Database (free offer), Bicep
+- **Infrastructure:** Azure App Service (F1 Free), Bicep
 
 ## Live App
 
@@ -92,4 +92,4 @@ Prerequisites: Azure App Service already created (F1 Free tier).
 | 7 | Session list with create form, session detail with nested sets table, add set form with exercise dropdown and sets/reps/weight/RPE |
 | 8 | Dashboard landing page with stats cards, React Router navigation, session header inline edit, delete session with confirmation, set inline edit/delete, form submitting states, Vitest + RTL test suite (10 tests) |
 | 9 | Azure Static Web App deployment (attempted), frontend served from App Service as single URL, GitHub project board with 6 epics and 23 stories |
-| 10 | Loading skeleton screens, inline form validation, toast notifications, exercise search/filter, Azure SQL Server migration with dual-provider setup, PWA support (manifest, service worker, install prompt) |
+| 10 | Loading skeleton screens, inline form validation, toast notifications, exercise search/filter, PWA support (manifest, service worker, install prompt) |

@@ -5,17 +5,8 @@ using WorkoutTracker.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (builder.Environment.IsProduction())
-{
-    builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(connectionString));
-}
-else
-{
-    builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlite(connectionString ?? "Data Source=workout-tracker.db"));
-}
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=workout-tracker.db"));
 
 builder.Services.AddCors(options =>
 {
@@ -54,10 +45,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    if (app.Environment.IsProduction())
-        db.Database.Migrate();
-    else
-        db.Database.EnsureCreated();
+    db.Database.EnsureCreated();
 
     DbInitialiser.Seed(db);
 }
